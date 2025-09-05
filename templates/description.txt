@@ -1,1 +1,1 @@
-this folder contains all the html documents in this project
+This folder contains all the html documents in this project
