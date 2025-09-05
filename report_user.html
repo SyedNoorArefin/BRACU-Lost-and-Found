@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report User - Lost & Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .report-form {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .report-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .user-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .btn {
+            background: #dc3545;
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background: #c82333;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 1rem;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="report-form">
+            <div class="report-header">
+                <h1>🚨 Report User</h1>
+                <p>Help us maintain a safe community by reporting inappropriate behavior</p>
+            </div>
+            
+            <div class="user-info">
+                <h3>User Being Reported</h3>
+                <p><strong>Username:</strong> {{ reported_user.username }}</p>
+                <p><strong>Student/Faculty ID:</strong> {{ reported_user.student_faculty_id }}</p>
+                {% if reported_user.first_name and reported_user.last_name %}
+                <p><strong>Name:</strong> {{ reported_user.first_name }} {{ reported_user.last_name }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="warning">
+                <strong>⚠️ Important:</strong> Please only report users for legitimate scams or harassment. 
+                False reports may result in your own account being reviewed.
+            </div>
+            
+            <form method="POST">
+                <div class="form-group">
+                    <label for="report_type">Report Type *</label>
+                    <select name="report_type" id="report_type" required>
+                        <option value="">Select report type</option>
+                        <option value="scam">Scam/Fraud</option>
+                        <option value="harassment">Harassment/Bullying</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reason">Reason for Report *</label>
+                    <textarea name="reason" id="reason" placeholder="Please provide a detailed explanation of why you are reporting this user..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="evidence">Additional Evidence (Optional)</label>
+                    <textarea name="evidence" id="evidence" placeholder="Any additional context, screenshots, or evidence that supports your report..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="item_id">Related Item (Optional)</label>
+                    <input type="number" name="item_id" id="item_id" placeholder="If this report is related to a specific item, enter the item ID">
+                </div>
+                
+                <div style="text-align: center;">
+                    <a href="{{ url_for('home') }}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

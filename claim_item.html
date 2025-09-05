@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Item - Lost & Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .claim-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .item-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .item-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .lost-item {
+            border-color: #ffc107;
+            background: #fff8e1;
+        }
+        
+        .found-item {
+            border-color: #28a745;
+            background: #f1f8e9;
+        }
+        
+        .item-photos {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        
+        .item-photo {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        
+        .status-lost { background: #ffc107; color: #000; }
+        .status-found { background: #28a745; color: #fff; }
+        
+        .btn-claim {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .btn-claim:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .points-info {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2><i class="fas fa-handshake text-success"></i> Claim Found Item</h2>
+            <div>
+                <a href="{{ url_for('home') }}" class="btn btn-outline-primary btn-sm me-2">Home</a>
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-info btn-sm">Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="claim-container">
+        <div class="text-center mb-4">
+            <h1 class="text-success mb-3">
+                <i class="fas fa-check-circle"></i> Item Found!
+            </h1>
+            <p class="lead">Please review the item details below and confirm this is your lost item.</p>
+        </div>
+
+        <div class="warning-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Important:</strong> Only claim items that you are certain belong to you. 
+            False claims may result in account review.
+        </div>
+
+        <div class="points-info">
+            <i class="fas fa-star"></i>
+            <strong>Good News:</strong> The person who found your item will receive 1 return point 
+            and may unlock badges for helping the community!
+        </div>
+
+        <div class="item-comparison">
+            <!-- Your Lost Item -->
+            <div class="item-card lost-item">
+                <h4 class="text-warning">
+                    <i class="fas fa-exclamation-triangle"></i> Your Lost Item
+                </h4>
+                <span class="status-badge status-lost">Lost</span>
+                
+                <h5>{{ lost_item.name }}</h5>
+                <p><strong>Description:</strong> {{ lost_item.description }}</p>
+                {% if lost_item.value %}
+                <p><strong>Value:</strong> ${{ "%.2f"|format(lost_item.value) }}</p>
+                {% endif %}
+                {% if lost_item.location %}
+                <p><strong>Location Lost:</strong> {{ lost_item.location }}</p>
+                {% endif %}
+                <p><strong>Posted:</strong> {{ lost_item.created_at.strftime('%B %d, %Y') }}</p>
+                
+                {% if lost_item.photos %}
+                <div class="item-photos">
+                    {% for photo in lost_item.photos %}
+                    <img src="{{ url_for('static', filename='uploads/' + photo) }}" alt="Lost item photo" class="item-photo">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Found Item -->
+            <div class="item-card found-item">
+                <h4 class="text-success">
+                    <i class="fas fa-hand-holding-heart"></i> Found Item
+                </h4>
+                <span class="status-badge status-found">Found</span>
+                
+                <h5>{{ item.name }}</h5>
+                <p><strong>Description:</strong> {{ item.description }}</p>
+                {% if item.value %}
+                <p><strong>Value:</strong> ${{ "%.2f"|format(item.value) }}</p>
+                {% endif %}
+                {% if item.location %}
+                <p><strong>Location Found:</strong> {{ item.location }}</p>
+                {% endif %}
+                <p><strong>Posted:</strong> {{ item.created_at.strftime('%B %d, %Y') }}</p>
+                
+                {% if item.photos %}
+                <div class="item-photos">
+                    {% for photo in item.photos %}
+                    <img src="{{ url_for('static', filename='uploads/' + photo) }}" alt="Found item photo" class="item-photo">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <form method="POST">
+                <button type="submit" class="btn-claim">
+                    <i class="fas fa-check"></i> Yes, This Is My Item - Claim It!
+                </button>
+            </form>
+            
+            <div class="mt-3">
+                <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i> Cancel - Not My Item
+                </a>
+            </div>
+        </div>
+
+        <div class="mt-4 p-3 bg-light rounded">
+            <h6><i class="fas fa-info-circle"></i> What happens next?</h6>
+            <ul class="mb-0">
+                <li>Both the lost and found posts will be removed</li>
+                <li>The person who found your item gets 1 return point</li>
+                <li>They may unlock badges for helping the community</li>
+                <li>Your item is successfully recovered!</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
