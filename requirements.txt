@@ -1,0 +1,6 @@
+Flask>=2.3.0
+Flask-SQLAlchemy>=3.0.0
+Flask-Mail>=0.9.1
+Werkzeug>=2.3.0
+SQLAlchemy>=2.0.0
+reportlab>=3.6.0
