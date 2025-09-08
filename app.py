@@ -309,18 +309,7 @@ class ActivityLog(db.Model):
     user_agent = db.Column(db.String(500), nullable=True)  # Browser/device info
     additional_data = db.Column(db.Text, nullable=True)  # JSON data for extra context
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    title = db.Column(db.String(200), nullable=False)
-    message = db.Column(db.Text, nullable=False)
-    url = db.Column(db.String(300), nullable=True)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    seen = db.Column(db.Boolean, default=False, nullable=False)  # New: track if notification is seen
     
-    user = db.relationship('User', backref='notifications')
-# Helper to get unseen notification count for a user
-def get_unseen_notification_count(user_id):
-    return Notification.query.filter_by(user_id=user_id, seen=False).count()
     # Relationships
     user = db.relationship('User', backref='activities')
     item = db.relationship('LostItem', backref='activities')
@@ -755,8 +744,7 @@ def create_notification(user_id, title, message, url=None):
             user_id=user_id,
             title=title,
             message=message,
-            url=url or url_for('home', _external=False),
-            seen=False
+            url=url or url_for('home', _external=False)
         )
         db.session.add(notification)
         db.session.commit()
@@ -765,13 +753,6 @@ def create_notification(user_id, title, message, url=None):
         db.session.rollback()
         print(f"Error creating notification: {e}")
         return False
-# API route to get unseen notification count for current user
-@app.route('/notifications/unseen_count', methods=['GET'])
-def unseen_notification_count():
-    if 'user_id' not in session:
-        return {'count': 0}
-    count = get_unseen_notification_count(session['user_id'])
-    return {'count': count}
 
 # ---------------- Activity Logging Helpers ----------------
 def log_activity(user_id=None, action_type='', action_description='', item_id=None, additional_data=None):
